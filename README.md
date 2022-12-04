@@ -54,19 +54,21 @@ If you are missing any of the above or errors are present in the project, seek h
 ## Part Two: Implementing ListInterface
 Start off by implementing the ListInterface provided. Unlike previous lists you’ve created, in this one you may not use loops of any kind. Be sure to pay close attention to the big-O running times. You will not pass all the tests if you do not adhere to these running times.
 
-**Hints:** Recursion is all about reducing some problem slightly to make it easier to solve. Ask yourself, “What method would make this easier?” For example, the contains method signature is written in a way that it is not going to be possible to do recursion on a Node. However, there is nothing stopping us from writing a private method that we can use internally. It sure would be great if we had a method that had this signature:
+As a general rule, you can access one end of the list directly, and you have to slink your way through to get to the other end of the list. Along those lines, the `Node` class is in the support module, with the intent that you will keep the list singly-linked. The big-O restrictions correspond to that.
+
+**Hints:** Recursion is all about reducing some problem slightly to make it easier to solve. Ask yourself, “What method would make this easier?” For example, the contains method signature is written in a way that it is not going to be possible to do recursion on a `Node`. However, there is nothing stopping us from writing a private method that we can use internally. It sure would be great if we had a method that had this signature:
 
 ```
 private int contains(T toFind, Node<T> toCheck, int currentIndex);
 ```
 
-We can then simply ask, does toCheck hold toFind? If it does, we can return currentIndex. Otherwise, we recurse on the next node in the list, at the next index, with the same toFind value. What should we do if toCheck is null?
+We can then simply ask, does `toCheck` hold `toFind`? If it does, we can return `currentIndex`. Otherwise, we recurse on the next node in the list, at the next index, with the same `toFind` value. What should we do if `toCheck` is null?
 
 Try and come up with good “helper” methods that lend themselves to recursion. You can’t modify the interface, but that does not stop you from adding new methods.
 
 
 ## Part Three: Implement a Maze Builder
-Take a look at the `Room` and `MazeBuilder` interfaces. Although there are no tests for `Room`(perhaps an opportunity for additional test cases?), you will need some kind of class to generate these. Once you have a basic class for this, implement your `MazeBuilder`. Start with the easy methods `createRoom` and `createExit`. These should simply return new instances of the `Room` type you just made.
+Take a look at the `Room` and `MazeBuilder` interfaces. Although there are no tests for `Room`(feel free to add test cases if you like), you will need some kind of class to generate these. Once you have a basic class for this, implement your `MazeBuilder`. Start with the easy methods `createRoom` and `createExit`. These should simply return new instances of the `Room` type you just made.
 
 Now, try to add the `addOneWayPassage` method. This method takes in a `fromRoom` and `toRoom`. Then, this method should update the `fromRoom` to contain the `toRoom`. Basically, you’re adding a one way passage. In a maze this could be seen as falling through a hole or walking through a room where a portcullis falls behind you. Make sure to read the documentation to ensure that you are implementing everything right. What should happen if we add the same `toRoom` more than one time?
 
@@ -81,12 +83,12 @@ There is an elegant recursive solution to solving a maze. To get started, we wil
 We’ll define this method as follows:
 
 ```
-	boolean canBeSolved(Room r);
+boolean canBeSolved(Room r);
 ```
 
 We have a pretty simple base case: If `r.isExit()` then we should return true because we can solve the maze.
 
-In the situation where r is not an exit, we know that it `canBeSolved` if one of the rooms we can reach from r `canBeSolved`. So, we can recurse on each of the Rooms in `r.getRooms()`.
+In the situation where `r` is not an exit, we know that it `canBeSolved` if one of the rooms we can reach from `r` `canBeSolved`. So, we can recurse on each of the rooms in `r.getRooms()`.
 
 However, what is going to happen in the following maze:
 
@@ -94,6 +96,6 @@ However, what is going to happen in the following maze:
 
 Let’s say we start in room A. We check and room A is not an exit. So we recur on room B. We see that B is not an exit, and then we recur on room A. We see that room A is not an exit, so we recur on room B. We see that B is not an exit, and we recur on room A. Uh oh! We are going to get a stack overflow.
 
-We need to come up with someway to mark the places we’ve already visited. If we have visited a location, we know that we should not recur on it. Take a look at the methods you implemented in the `ListInterface`. Can any of these help us?
+We need to come up with some way to mark the places we’ve already visited. If we have visited a location, we know that we should not recur on it. Take a look at the methods you implemented in the `ListInterface`. Can any of these help us?
 
-Can you finish up the `canBeSolved` method? How can you translate this to an algorithm that actually returns a List of rooms to visit?
+After you finish the `canBeSolved` method, you need to translate this to an algorithm that returns a `List` of rooms to visit for the solution.
